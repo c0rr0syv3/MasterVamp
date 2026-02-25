@@ -1,6 +1,6 @@
 name = "vtm-sheet"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = "MS"
+pages_build_output_dir = "site"
 
 [[d1_databases]]
 binding       = "vtm_database"
@@ -10,4 +10,3 @@ database_id   = "dc3019ae-ccf2-478e-85e6-bf9cd03ea05b"
 [[kv_namespaces]]
 binding = "VTM_SESSIONS"
 id      = "a6a869468d534927bb1a56bfd4828c6c"
-# "caim" é o nome do namespace no dashboard — o binding acima é o que o código usa
