@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mesa Virtual — Vampiro: A Máscara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="mesa.css">
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+
+<div class="corner corner-tl"></div>
+<div class="corner corner-tr"></div>
+<div class="corner corner-bl"></div>
+<div class="corner corner-br"></div>
+
+<!-- NAV -->
+<nav class="nav-bar">
+    <button class="btn-nav" onclick="window.location.href='../index.html'">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Voltar ao Menu
+    </button>
+    <div class="nav-user" id="nav-user"></div>
+</nav>
+
+<div class="mesa-container">
+
+    <!-- ==================== TELA: LOADING ==================== -->
+    <div id="screen-loading" class="screen">
+        <div class="loading-sigil">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="36" stroke="#8a0000" stroke-width="1" opacity="0.5" stroke-dasharray="4 4"/>
+                <circle cx="40" cy="40" r="3" fill="#8a0000"/>
+            </svg>
+        </div>
+        <p class="loading-text">Aguardando nas sombras...</p>
+    </div>
+
+    <!-- ==================== TELA: MESTRE — CRIAR MESA ==================== -->
+    <div id="screen-master-create" class="screen" style="display:none;">
+        <div class="page-header">
+            <h1>Câmara do Narrador</h1>
+            <p class="page-sub">Defina as condições da Crônica antes de abrir as portas</p>
+        </div>
+
+        <div class="two-col">
+            <!-- CRIAR NOVA MESA -->
+            <div class="panel">
+                <div class="panel-header"><h2>Criar Nova Mesa</h2></div>
+                <div class="panel-body">
+                    <div class="field-group">
+                        <label>Nome da Mesa / Crônica</label>
+                        <input type="text" id="mesa-nome" placeholder="A Máscara de Caim...">
+                    </div>
+                    <div class="field-group">
+                        <label>Número Máximo de Jogadores</label>
+                        <div class="number-row">
+                            <button class="num-btn" onclick="ajustarJogadores(-1)">−</button>
+                            <span id="num-jogadores" class="num-display">4</span>
+                            <button class="num-btn" onclick="ajustarJogadores(1)">+</button>
+                        </div>
+                    </div>
+                    <div class="field-group">
+                        <label>Preferências / Avisos ao entrar</label>
+                        <textarea id="mesa-prefs" placeholder="Regras da casa, tom da campanha, restrições de clã..." rows="3"></textarea>
+                    </div>
+                    <button class="btn-primary full" onclick="criarMesa()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                        Criar Mesa
+                    </button>
+                </div>
+            </div>
+
+            <!-- MESAS EXISTENTES DO MESTRE -->
+            <div class="panel">
+                <div class="panel-header"><h2>Suas Mesas</h2></div>
+                <div class="panel-body">
+                    <div id="lista-mesas-mestre">
+                        <p class="empty-note">Nenhuma mesa criada ainda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TELA: JOGADOR — ENTRAR ==================== -->
+    <div id="screen-player-join" class="screen" style="display:none;">
+        <div class="page-header">
+            <h1>Portal das Sombras</h1>
+            <p class="page-sub">Selecione sua ficha e insira o código da mesa para entrar na Crônica</p>
+        </div>
+
+        <div class="two-col">
+            <!-- ENTRAR EM MESA -->
+            <div class="panel">
+                <div class="panel-header"><h2>Entrar em uma Mesa</h2></div>
+                <div class="panel-body">
+                    <div class="field-group">
+                        <label>Código da Mesa</label>
+                        <input type="text" id="join-codigo" placeholder="Ex: VTM-4F2A9C" style="letter-spacing:0.2em; text-transform:uppercase;">
+                    </div>
+                    <div class="field-group">
+                        <label>Sua Ficha</label>
+                        <select id="join-ficha">
+                            <option value="">Selecione uma ficha...</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary full" onclick="entrarNaMesa()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        Entrar na Crônica
+                    </button>
+                </div>
+            </div>
+
+            <!-- MESAS EM QUE PARTICIPA -->
+            <div class="panel">
+                <div class="panel-header"><h2>Suas Crônicas Ativas</h2></div>
+                <div class="panel-body">
+                    <div id="lista-mesas-player">
+                        <p class="empty-note">Você não está em nenhuma mesa ainda.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== TELA: INTERIOR DA MESA ==================== -->
+    <div id="screen-mesa-interior" class="screen" style="display:none;">
+        <div class="mesa-header-bar">
+            <div>
+                <h1 id="mesa-titulo-interior">—</h1>
+                <div class="mesa-meta-row">
+                    <span class="meta-pill" id="mesa-id-display"></span>
+                    <span class="meta-pill" id="mesa-vagas-display"></span>
+                </div>
+            </div>
+            <div class="mesa-header-actions">
+                <button class="btn-nav" onclick="sairDaMesa()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Sair da Mesa
+                </button>
+            </div>
+        </div>
+
+        <!-- Aviso de preferências -->
+        <div id="mesa-prefs-display" class="prefs-banner" style="display:none;"></div>
+
+        <!-- Código para convidar -->
+        <div id="codigo-convite-box" class="invite-box" style="display:none;">
+            <span class="invite-label">Código para convidar jogadores:</span>
+            <span id="codigo-convite-val" class="invite-code"></span>
+            <button class="btn-ghost-sm" onclick="copiarCodigo()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copiar
+            </button>
+        </div>
+
+        <!-- Grid de fichas -->
+        <div class="section-label">Fichas na Mesa</div>
+        <div id="char-grid" class="char-grid"></div>
+
+        <!-- Log de Rolagens -->
+        <div id="roll-log-section" style="display:none; margin-top:28px;">
+            <div class="section-label" style="display:flex;align-items:center;justify-content:space-between;">
+                <span>Log de Rolagens</span>
+                <button class="btn-ghost-sm" onclick="document.getElementById('roll-log-section').style.display='none'; _rollLog=[];">Limpar</button>
+            </div>
+            <div id="roll-log-entries"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- MODAL: Código da mesa criada -->
+<div id="modal-overlay" class="modal-overlay" style="display:none;" onclick="fecharModal(event)">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Mesa Criada!</h3>
+        </div>
+        <div class="modal-body">
+            <p class="modal-sub">Compartilhe este código com seus jogadores:</p>
+            <div class="modal-code" id="modal-code-display"></div>
+            <button class="btn-ghost-sm" onclick="copiarCodigoModal()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copiar Código
+            </button>
+            <button class="btn-primary" style="margin-top:12px; width:100%;" onclick="abrirMesaPorId(window._novaMesaId)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+                Entrar na Mesa
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL: Rolagem de Dados WoD -->
+<div id="roll-modal-overlay" class="modal-overlay" style="display:none;" onclick="fecharRollModalFora(event)">
+    <div class="modal-box roll-modal-box">
+
+        <div class="modal-header">
+            <div>
+                <h3>Parada de Dados</h3>
+                <div class="roll-char-sub" id="roll-char-name">—</div>
+            </div>
+            <button class="modal-close-btn" onclick="fecharRollModal()">✕</button>
+        </div>
+
+        <div class="roll-modal-body">
+
+            <!-- Coluna esquerda: seleção de características -->
+            <div class="roll-col-selecao">
+                <div class="roll-col-title">Selecionar Características</div>
+                <div id="roll-itens-lista" class="roll-itens-lista"></div>
+            </div>
+
+            <!-- Coluna direita: configuração e resultado -->
+            <div class="roll-col-config">
+
+                <!-- Total de dados -->
+                <div class="roll-total-box">
+                    <div class="roll-total-label">Parada de Dados</div>
+                    <div class="roll-total-num" id="roll-total-display">0d10</div>
+                    <div class="roll-total-hint" id="roll-total-num">0 pontos selecionados</div>
+                </div>
+
+                <!-- Dificuldade -->
+                <div class="roll-config-row">
+                    <label class="roll-config-label">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        Dificuldade
+                    </label>
+                    <div class="diff-row">
+                        <button class="num-btn" onclick="ajustarDif(-1)">−</button>
+                        <span class="diff-val" id="roll-dificuldade-display">6</span>
+                        <input type="hidden" id="roll-dificuldade" value="6">
+                        <button class="num-btn" onclick="ajustarDif(1)">+</button>
+                        <span class="diff-hint">padrão: 6</span>
+                    </div>
+                </div>
+
+                <!-- Auto-roll -->
+                <div class="roll-config-row">
+                    <label class="roll-auto-label">
+                        <input type="checkbox" id="roll-auto" checked onchange="toggleAutoMode()">
+                        <span class="roll-check-box"></span>
+                        Rolar automaticamente
+                    </label>
+                </div>
+                <div class="roll-mode-hint" id="roll-mode-hint-auto">
+                    O resultado será rolado aqui e publicado no log da mesa, visível ao Mestre.
+                </div>
+                <div class="roll-mode-hint" id="roll-mode-hint-discord" style="display:none;">
+                    Gera a sintaxe para bots de dados no Discord (Rollem, Dice Maiden, Avrae...).
+                </div>
+
+                <!-- Botão rolar -->
+                <button class="btn-roll-exec" onclick="executarRolagem()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="2" width="20" height="20" rx="4"/>
+                        <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/>
+                        <circle cx="15.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/>
+                        <circle cx="8.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"/>
+                        <circle cx="15.5" cy="15.5" r="1.5" fill="currentColor" stroke="none"/>
+                        <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none"/>
+                    </svg>
+                    Rolar Dados
+                </button>
+
+                <!-- Resultado interno -->
+                <div id="roll-resultado" class="roll-resultado" style="display:none;"></div>
+
+                <!-- Sintaxe Discord -->
+                <div id="roll-discord-box" class="roll-discord-box" style="display:none;">
+                    <div class="discord-header">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="#7289da"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057c.002.022.015.043.032.053a19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>
+                        Sintaxe para Discord
+                    </div>
+                    <div class="discord-contexto" id="roll-discord-contexto"></div>
+                    <div class="discord-bots">
+                        <div class="discord-bot-row">
+                            <span class="bot-label">Rollem</span>
+                            <code class="bot-code" id="roll-discord-rollem"></code>
+                            <button class="btn-copy" onclick="copiarDiscord('roll-discord-rollem')">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                Copiar
+                            </button>
+                        </div>
+                        <div class="discord-bot-row">
+                            <span class="bot-label">Dice Maiden</span>
+                            <code class="bot-code" id="roll-discord-maiden"></code>
+                            <button class="btn-copy" onclick="copiarDiscord('roll-discord-maiden')">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                Copiar
+                            </button>
+                        </div>
+                        <div class="discord-bot-row">
+                            <span class="bot-label">Avrae</span>
+                            <code class="bot-code" id="roll-discord-avrae"></code>
+                            <button class="btn-copy" onclick="copiarDiscord('roll-discord-avrae')">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                Copiar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /roll-col-config -->
+        </div><!-- /roll-modal-body -->
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="landing-toast" id="toast"></div>
+
+<script src="db.js"></script>
+<script src="mesa.js"></script>
+<script src="particles.js"></script>
+</body>
+</html>

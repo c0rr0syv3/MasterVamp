@@ -1,0 +1,521 @@
+:root {
+    --blood: #8a0000;
+    --blood-dark: #4a0000;
+    --blood-bright: #cc1111;
+    --blood-glow: #ff2222;
+    --ash: #1a1410;
+    --stone: #221c18;
+    --parchment: #c8b89a;
+    --parchment-dark: #9a8870;
+    --gold: #c9a84c;
+    --gold-dim: #7a6530;
+    --silver: #a0a0b0;
+    --bone: #e8dfc8;
+    --shadow: rgba(0,0,0,0.8);
+    --dot-size: 14px;
+    --sq-size: 14px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--ash);
+    color: var(--bone);
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 15px;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(100,0,0,0.18) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(80,0,0,0.15) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  }
+
+  /* ==================== NAV ==================== */
+.nav-bar {
+  display: flex;
+  gap: 10px;
+  padding: 12px 20px;
+  background: linear-gradient(180deg, #0d0a08 0%, transparent 100%);
+  border-bottom: 1px solid rgba(138,0,0,0.4);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(8px);
+}
+.btn-nav {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 7px 16px;
+  border: 1px solid var(--gold-dim);
+  background: rgba(20,15,10,0.9);
+  color: var(--gold);
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.btn-nav svg { flex-shrink: 0; }
+.btn-nav:hover { background: rgba(138,0,0,0.3); border-color: var(--blood-bright); color: #fff; }
+.btn-nav:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-save {
+  background: linear-gradient(135deg, rgba(120,0,0,0.7) 0%, rgba(80,0,0,0.9) 100%);
+  border-color: var(--blood) !important;
+  color: #fff !important;
+  box-shadow: 0 0 12px rgba(180,0,0,0.25), inset 0 1px 0 rgba(255,80,80,0.1);
+}
+.btn-save svg { stroke: #ffaaaa; }
+.btn-save:hover {
+  background: linear-gradient(135deg, rgba(180,0,0,0.8) 0%, rgba(120,0,0,0.95) 100%) !important;
+  box-shadow: 0 0 20px rgba(200,0,0,0.4) !important;
+  border-color: var(--blood-bright) !important;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+  /* ==================== SHEET CONTAINER ==================== */
+  .sheet-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 20px 60px;
+  }
+
+  /* ==================== HEADER ==================== */
+  .sheet-header {
+    text-align: center;
+    padding: 30px 0 20px;
+    position: relative;
+  }
+  .sheet-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 200px; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--blood), transparent);
+  }
+  .sheet-header h1 {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(22px, 4vw, 38px);
+    font-weight: 900;
+    color: var(--blood-bright);
+    text-shadow: 0 0 30px rgba(200,0,0,0.5), 0 2px 4px #000;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+  }
+  .sheet-header .subtitle {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .ornament { color: var(--blood); opacity: 0.6; font-size: 20px; margin: 0 10px; }
+
+  /* ==================== SECTIONS ==================== */
+  .section {
+    margin-bottom: 24px;
+    border: 1px solid rgba(138,0,0,0.25);
+    background: linear-gradient(180deg, rgba(30,22,16,0.9) 0%, rgba(22,16,12,0.95) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--blood-dark), var(--blood), var(--blood-dark), transparent);
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px 8px;
+    border-bottom: 1px solid rgba(138,0,0,0.2);
+  }
+  .section-header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .section-header::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(201,168,76,0.3), transparent);
+  }
+  .section-body { padding: 16px 20px; }
+
+  /* ==================== GRID ==================== */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-identity {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px 16px;
+  }
+  @media (max-width: 700px) {
+    .grid-3, .grid-identity { grid-template-columns: 1fr; }
+  }
+
+  /* ==================== INPUTS ==================== */
+.input-group { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 3px; 
+  position: relative; /* Essencial para ancorar o ícone de clã */
+}
+
+.input-group label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+}
+
+.input-group input[type="text"],
+.input-group select {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(201,168,76,0.25);
+  color: var(--bone);
+  font-family: 'EB Garamond', serif;
+  font-size: 14px;
+  padding: 4px 2px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+/* Dá um espaço à direita apenas no select de clã para o texto não invadir o ícone */
+select#cla {
+  padding-right: 30px;
+}
+
+.input-group input[type="text"]:focus,
+.input-group select:focus { 
+  border-bottom-color: var(--blood-bright); 
+}
+
+.input-group select option { 
+  background: #1a1410; 
+}
+
+.span-3 { grid-column: span 3; }
+.span-2 { grid-column: span 2; }
+
+/* ==================== ÍCONE DE CLÃ ==================== */
+#clan-icon-display {
+  position: absolute;
+  right: 2px;          /* Encosta na direita do select */
+  bottom: 6px;         /* Alinha com a linha base do texto */
+  font-size: 20px;     /* Tamanho do brasão */
+  color: var(--blood-bright, #8b0000); /* Usa sua cor vermelha do tema */
+  pointer-events: none; /* Deixa o clique passar "através" do ícone para abrir o select */
+  transition: opacity 0.3s ease;
+}
+
+/* Oculta o ícone se a classe base não estiver acompanhada de um clã específico */
+#clan-icon-display[class="icon-clan"] {
+  opacity: 0;
+}
+
+  /* ==================== COLUMN HEADERS ==================== */
+  .col-header {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--blood-bright);
+    margin-bottom: 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(138,0,0,0.3);
+    text-align: center;
+  }
+
+  /* ==================== STAT ROW ==================== */
+  .stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-label {
+    font-family: 'EB Garamond', serif;
+    font-size: 13.5px;
+    color: var(--parchment);
+    flex: 1;
+  }
+
+  /* ==================== DOTS ==================== */
+  .dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    flex-shrink: 0;
+  }
+  .dot {
+    width: var(--dot-size);
+    height: var(--dot-size);
+    border-radius: 50%;
+    border: 1.5px solid rgba(201,168,76,0.4);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .dot:hover { border-color: var(--blood-bright); background: rgba(138,0,0,0.3); }
+  .dot.active {
+    background: var(--blood);
+    border-color: var(--blood-bright);
+    box-shadow: 0 0 6px rgba(200,0,0,0.6);
+  }
+
+  /* ==================== SQUARES ==================== */
+  .squares-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .square {
+    width: var(--sq-size);
+    height: var(--sq-size);
+    border: 1.5px solid rgba(201,168,76,0.35);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .square:hover { border-color: var(--blood-bright); background: rgba(138,0,0,0.3); }
+  .square.active {
+    background: var(--blood);
+    border-color: var(--blood-bright);
+    box-shadow: 0 0 5px rgba(200,0,0,0.5);
+  }
+
+  /* ==================== DISCIPLINE / ANTECEDENT ROWS ==================== */
+  .adv-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .adv-row:last-child { border-bottom: none; }
+  .adv-select, .adv-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(201,168,76,0.2);
+    color: var(--bone);
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    padding: 2px;
+    outline: none;
+    min-width: 0;
+  }
+  .adv-select option { background: #1a1410; }
+  .adv-select:focus, .adv-input:focus { border-bottom-color: var(--blood-bright); }
+
+  /* ==================== VIRTUES / DERIVED ==================== */
+  .derived-block { text-align: center; }
+  .derived-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 6px;
+  }
+  .derived-dots { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; margin-bottom: 10px; }
+
+  /* ==================== VITALIDADE ==================== */
+  .vit-list { display: flex; flex-direction: column; gap: 6px; }
+  .vit-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 8px;
+    border: 1px solid rgba(255,255,255,0.06);
+    background: rgba(0,0,0,0.2);
+  }
+  .vit-check {
+    width: 16px; height: 16px;
+    border: 1.5px solid rgba(138,0,0,0.5);
+    background: transparent;
+    cursor: pointer;
+    appearance: none;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .vit-check:checked {
+    background: var(--blood);
+    border-color: var(--blood-bright);
+  }
+  .vit-check:checked::after {
+    content: '✕';
+    position: absolute;
+    top: -1px; left: 1px;
+    font-size: 11px;
+    color: #fff;
+  }
+  .vit-label {
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    color: var(--parchment);
+    flex: 1;
+  }
+  .vit-penalty {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    color: var(--blood-bright);
+    letter-spacing: 0.1em;
+  }
+
+  /* ==================== INVENTORY ==================== */
+  .inv-controls { display: flex; gap: 8px; margin-bottom: 12px; }
+  .inv-text-input {
+    flex: 1;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(201,168,76,0.2);
+    color: var(--bone);
+    font-family: 'EB Garamond', serif;
+    font-size: 14px;
+    padding: 7px 12px;
+    outline: none;
+  }
+  .inv-text-input:focus { border-color: var(--blood-bright); }
+  .inv-list { display: flex; flex-direction: column; gap: 4px; }
+  .inv-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    background: rgba(0,0,0,0.25);
+    border-left: 2px solid rgba(138,0,0,0.4);
+    font-family: 'EB Garamond', serif;
+    font-size: 14px;
+    color: var(--parchment);
+  }
+  .inv-remove {
+    margin-left: auto;
+    background: none;
+    border: none;
+    color: rgba(138,0,0,0.5);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    transition: color 0.2s;
+  }
+  .inv-remove:hover { color: var(--blood-bright); }
+
+  /* ==================== BLOOD / WILLPOWER ==================== */
+  .pool-container { display: flex; flex-direction: column; gap: 12px; }
+  .pool-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 6px;
+  }
+
+  /* ==================== FOTO ==================== */
+  .foto-preview {
+    width: 80px; height: 100px;
+    border: 1px solid rgba(138,0,0,0.4);
+    background: rgba(0,0,0,0.3);
+    object-fit: cover;
+    object-position: center top;
+    display: none;
+  }
+  .foto-preview.visible { display: block; }
+
+  /* ==================== DECORATIVE ELEMENTS ==================== */
+  .blood-drip {
+    position: fixed;
+    top: 0; right: 60px;
+    width: 3px;
+    background: linear-gradient(180deg, var(--blood) 0%, transparent 100%);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  /* ==================== ALERT / TOAST ==================== */
+  .toast {
+    position: fixed;
+    bottom: 30px; right: 30px;
+    background: rgba(20,5,5,0.95);
+    border: 1px solid var(--blood);
+    color: var(--bone);
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    padding: 12px 20px;
+    z-index: 999;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ==================== SEPARATORS ==================== */
+  .sep {
+    border: none;
+    border-top: 1px solid rgba(138,0,0,0.2);
+    margin: 12px 0;
+  }
+
+
+@font-face {
+  font-family: 'clans';
+  src: url('../assets/fontello-af13fd92/font/clans.eot?26894355');
+  src: url('../assets/fontello-af13fd92/font/clans.eot?26894355#iefix') format('embedded-opentype'),
+       url('../assets/fontello-af13fd92/font/clans.woff2?26894355') format('woff2'),
+       url('../assets/fontello-af13fd92/font/clans.woff?26894355') format('woff'),
+       url('../assets/fontello-af13fd92/font/clans.ttf?26894355') format('truetype'),
+       url('../assets/fontello-af13fd92/font/clans.svg?26894355#clans') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+/* Classe base */
+.icon-clan {
+  font-family: "clans" !important;
+  font-style: normal;
+  font-weight: normal;
+  display: inline-block;
+  text-decoration: inherit;
+  width: 1em;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin-right: 15%;
+}
+
+/* Mapeamento exato conforme sua última lista */
+.icon-banuhaqim:before { content: '\e800'; }
+.icon-hecata:before    { content: '\e801'; }
+.icon-lasombra:before  { content: '\e802'; }
+.icon-nosferatu:before { content: '\e803'; }
+.icon-toreador:before  { content: '\e804'; }
+.icon-tremere:before   { content: '\e805'; }
+.icon-malkovian:before { content: '\e806'; }
+.icon-ravnos:before    { content: '\e807'; }
+.icon-tzimisce:before  { content: '\e808'; }
+.icon-ventrue:before   { content: '\e809'; }
+.icon-giovanni:before  { content: '\e80a'; }
+.icon-set:before       { content: '\e80b'; }
+.icon-brujah:before    { content: '\e80c'; }
+.icon-gangrel:before   { content: '\e80d'; }

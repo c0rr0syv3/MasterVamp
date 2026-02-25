@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vampiro: A Máscara — Ficha de Personagem</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="sheet.css">
+</head>
+<body>
+
+<nav class="nav-bar">
+  <button class="btn-nav" onclick="exportarJSON()" title="Exportar como JSON">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+      <polyline points="7 10 12 15 17 10"/>
+      <line x1="12" y1="15" x2="12" y2="3"/>
+    </svg>
+    Exportar JSON
+  </button>
+  <button class="btn-nav btn-save" id="btn-salvar" onclick="salvarNaNuvem()" title="Salvar na nuvem">
+    <svg id="icon-save" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+      <polyline points="17 21 17 13 7 13 7 21"/>
+      <polyline points="7 3 7 8 15 8"/>
+    </svg>
+    Salvar na Nuvem
+  </button>
+</nav>
+
+<div class="sheet-container">
+
+  <!-- HEADER -->
+  <div class="sheet-header">
+    <h1>Vampiro: A Máscara</h1>
+    <div class="subtitle"><span class="ornament">✦</span> Ficha de Personagem <span class="ornament">✦</span></div>
+  </div>
+
+  <!-- IDENTIDADE -->
+  <div class="section" id="modulo-identidade">
+    <div class="section-header"><h2>Identidade</h2></div>
+    <div class="section-body">
+      <div class="grid-identity">
+        <div class="input-group"><label>Nome</label><input type="text" id="nome"></div>
+        <div class="input-group"><label>Jogador</label><input type="text" id="jogador"></div>
+        <div class="input-group"><label>Crônica</label><input type="text" id="cronica"></div>
+        <div class="input-group"><label>Natureza</label><select id="natureza"></select></div>
+        <div class="input-group"><label>Comportamento</label><select id="comportamento"></select></div>
+        <div class="input-group"><label>Clã</label><select id="cla" onchange="atualizarIconeCla(this.value)"></select><i id="clan-icon-display" class="icon-clan"></i></div>
+        <div class="input-group"><label>Geração</label><input type="text" id="geracao"></div>
+        <div class="input-group"><label>Refúgio</label><input type="text" id="refugio"></div>
+        <div class="input-group"><label>Conceito</label><select id="conceito"></select></div>
+        <div class="input-group span-3">
+          <label>URL da Foto (imagem terminando em .jpg, .png, .webp)</label>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input type="text" id="foto_perfil" placeholder="https://i.imgur.com/sua-imagem.jpg" oninput="atualizarFoto(this.value)">
+            <img id="foto-preview" class="foto-preview" alt="Foto do personagem">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ATRIBUTOS -->
+  <div class="section" id="modulo-atributos">
+    <div class="section-header"><h2>Atributos</h2></div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div>
+          <div class="col-header">Físicos</div>
+          <div id="attr-fisicos"></div>
+        </div>
+        <div>
+          <div class="col-header">Sociais</div>
+          <div id="attr-sociais"></div>
+        </div>
+        <div>
+          <div class="col-header">Mentais</div>
+          <div id="attr-mentais"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HABILIDADES -->
+  <div class="section" id="modulo-habilidades">
+    <div class="section-header"><h2>Habilidades</h2></div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div>
+          <div class="col-header">Talentos</div>
+          <div id="abil-talentos"></div>
+        </div>
+        <div>
+          <div class="col-header">Perícias</div>
+          <div id="abil-pericias"></div>
+        </div>
+        <div>
+          <div class="col-header">Conhecimentos</div>
+          <div id="abil-conhecimentos"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VANTAGENS -->
+  <div class="section" id="modulo-vantagens">
+    <div class="section-header"><h2>Vantagens</h2></div>
+    <div class="section-body">
+      <div class="grid-3">
+        <div>
+          <div class="col-header">Disciplinas</div>
+          <div id="adv-disciplinas"></div>
+        </div>
+        <div>
+          <div class="col-header">Antecedentes</div>
+          <div id="adv-antecedentes"></div>
+        </div>
+        <div>
+          <div class="col-header">Virtudes</div>
+          <div id="virtudes-container">
+            <div class="stat-row">
+              <span class="stat-label">Consciência</span>
+              <div class="dots" data-name="virt_consciencia"></div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Autocontrole</span>
+              <div class="dots" data-name="virt_autocontrole"></div>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Coragem</span>
+              <div class="dots" data-name="virt_coragem"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ESTADO ATUAL -->
+  <div class="section" id="modulo-estado">
+    <div class="section-header"><h2>Estado Atual</h2></div>
+    <div class="section-body">
+      <div class="grid-3">
+        <!-- Humanidade e Vontade -->
+        <div class="pool-container">
+          <div class="derived-block">
+            <div class="derived-label">Humanidade</div>
+            <div class="derived-dots dots" id="calc-humanidade" data-name="humanidade"></div>
+          </div>
+          <hr class="sep">
+          <div class="derived-block">
+            <div class="derived-label">Força de Vontade Permanente</div>
+            <div class="derived-dots dots" id="calc-vontade" data-name="vontade_perm"></div>
+          </div>
+          <div class="derived-block" style="margin-top:8px;">
+            <div class="derived-label">Vontade Temporária</div>
+            <div class="squares-container" id="vontade-temp" data-name="vontade_temp" style="justify-content:center;"></div>
+          </div>
+        </div>
+
+        <!-- Pontos de Sangue -->
+        <div>
+          <div class="pool-label">Pontos de Sangue</div>
+          <div class="squares-container" id="sangue-pool" data-name="pontos_sangue"></div>
+        </div>
+
+        <!-- Vitalidade -->
+        <div>
+          <div class="pool-label">Vitalidade</div>
+          <div class="vit-list" id="vitalidade-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INVENTÁRIO -->
+  <div class="section" id="modulo-inventario">
+    <div class="section-header"><h2>Equipamento & Inventário</h2></div>
+    <div class="section-body">
+      <div class="inv-controls">
+        <input type="text" class="inv-text-input" id="inv-input" placeholder="Novo item..." onkeydown="if(event.key==='Enter')adicionarItem()">
+        <button class="btn-nav" onclick="adicionarItem()">+ Adicionar</button>
+      </div>
+      <div class="inv-list" id="inv-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+<script src="sheet.js"></script>
+</body>
+</html>
